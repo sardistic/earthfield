@@ -10,6 +10,8 @@ APIs: `/api/space`, `/api/local?lat=35.6127&lon=-77.3664`, `/api/cosmic?lat=35.6
 
 Page refresh is every two minutes while visible. Server caches reflect source cadence. A source failure cannot masquerade as a fresh zero. If a browser retains its previous reading after failure, the row is marked failed and excluded from fresh coverage. Averages/ranges use actual available history in the selected 24-hour, seven-day or 30-day window. Trend definitions and coverage are explicit; no interpolated history is invented.
 
+Hosted shared-cache access is optional: Sites can deny `caches.default`, so property access and reads are guarded and fall back to direct fetches. Cache-write errors cannot invalidate a reading. The in-memory TTL cache still applies. Validate actual production data responses after publication, not just deployment status.
+
 ## Sources
 
 - NOAA SWPC JSON: active quality-zero upstream solar wind, GOES soft X-rays, protons, electrons and magnetometer (arcjet flags excluded), Kp, Kyoto Dst, noon F10.7 with its published 90-day mean.

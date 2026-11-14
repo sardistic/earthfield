@@ -9,3 +9,7 @@ Current readings, historical arithmetic means/ranges, trends and source age reta
 Nearest operational USGS observatory and model grid centers are selected by coordinates; distances are displayed. Newark and Oulu neutron monitors are named reference stations, not measurements at the chosen address. Global/orbital data do not change geographically. User-initiated geolocation and manually selected coordinates are saved only in browser local storage.
 
 No database, external account credentials, or unattended ingestion. History comes from provider feeds. Cosmic-ray data are noncommercial and credited to station owners and NMDB.
+
+## 2026-11-14 — Hosted cache access is optional
+
+Sites dispatch can deny access to `caches.default`, including throwing when the property is accessed. Cache lookup failures must also fall back to direct provider fetches, and cache writes must never affect successful readings. Retain the bounded in-memory TTL cache and in-flight request coalescing. Regression tests cover denied default-cache access, reads and writes. Verify provider responses on the deployed Site using supported service access rather than relying solely on local tests and deployment status.

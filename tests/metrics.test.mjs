@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
-import {number,timestamp,points,distance,nearest,parseNmdb,usgsPoints,derivative,parseDrap} from '../worker/data.js';
+import {number,timestamp,points,distance,nearest,parseNmdb,usgsPoints,derivative,parseDrap,upstream} from '../worker/data.js';
 import {page} from '../worker/ui.js';
 import worker from '../worker/main.js';
 test('missing readings cannot silently become zero',()=>{for(const v of[null,undefined,'',true,'NaN',99999])assert.equal(number(v),null);assert.equal(number(0),0);assert.equal(number('0'),0);});
@@ -13,3 +13,19 @@ test('USGS nulls and future placeholders are excluded, field-change gaps skipped
 test('D-RAP preserves valid zero and parses the actual unprefixed longitude header',()=>{const xs=Array.from({length:90},(_,i)=>-178+i*4);const text='# Product Valid At : 2026-11-14 09:32 UTC\n    '+xs.join(' ')+'\n-------\n37 | '+xs.map(()=>0).join(' ')+'\n35 | '+xs.map(()=>3).join(' ');const p=parseDrap(text,37,-150);assert.equal(p.value,0);assert.equal(p.lon,-150);assert.equal(p.lat,37);assert.throws(()=>parseDrap('provider error',35,-77));});
 test('frontend script parses and contains no sample metric values',()=>{const script=page.match(/<script>([\s\S]*?)<\/script>/)[1];new vm.Script(script);assert.match(page,/Greenville, North Carolina/);assert.match(page,/Model-only comparison/);});
 test('routes validate coordinates and expose application health independently',async()=>{assert.equal((await worker.fetch(new Request('https://example.com/'))).status,200);assert.equal((await worker.fetch(new Request('https://example.com/api/local?lat=91'))).status,400);assert.equal((await worker.fetch(new Request('https://example.com/nope'))).status,404);assert.equal((await worker.fetch(new Request('https://example.com/healthz'))).status,200);});
+test('hosted cache denial cannot block live provider fetches',async()=>{
+ const originalFetch=globalThis.fetch,originalCaches=Object.getOwnPropertyDescriptor(globalThis,'caches');
+ let requests=0;
+ globalThis.fetch=async()=>{requests++;return Response.json({reading:119});};
+ try {
+  Object.defineProperty(globalThis,'caches',{configurable:true,value:{get default(){throw Error('This Worker is not permitted to access the default cache.');}}});
+  assert.deepEqual(await upstream('https://example.com/cache-denied'),{reading:119});
+  assert.deepEqual(await upstream('https://example.com/cache-denied'),{reading:119});
+  assert.equal(requests,1,'in-memory TTL cache still works');
+  Object.defineProperty(globalThis,'caches',{configurable:true,value:{default:{match:async()=>{throw Error('Cache read denied');}}}});
+  assert.deepEqual(await upstream('https://example.com/cache-read-denied'),{reading:119});
+  Object.defineProperty(globalThis,'caches',{configurable:true,value:{default:{match:async()=>undefined,put:async()=>{throw Error('Cache write denied');}}}});
+  assert.deepEqual(await upstream('https://example.com/cache-write-denied'),{reading:119});
+  assert.equal(requests,3);
+ } finally {globalThis.fetch=originalFetch;if(originalCaches)Object.defineProperty(globalThis,'caches',originalCaches);else delete globalThis.caches;}
+});
