@@ -1,5 +1,13 @@
 # Earth Field decisions
 
+## 2026-11-15 — Plain-language interpretation layer
+
+The page leads with a live sentence ("Space weather is quiet.") and a summary generated from the readings, followed by the 18 readings grouped in the order the Sun's influence travels: Sun, solar wind, magnetosphere, local sky, cosmic rays. Interpretation stays per-measurement; there is still no combined score.
+
+- The headline word and the R/S/G chips use NOAA's published scales only: R from GOES X-ray flux (M1 = R1 … X20 = R5), S from ≥10 MeV protons (10 pfu = S1, decades upward), G from Kp (5 = G1 … 9 = G5). Flare class (A/B/C/M/X) is derived from the same flux. Kp 3/4 and Dst ≤ −30/−50 nT add "unsettled"/"active" below storm level.
+- Per-card badges use NOAA thresholds where they exist (electron alert at 1,000), standard storm classes for Dst, and widely used descriptive bands for wind speed, density, Bt, Bz and F10.7. Ionosphere, ground field and GOES field get no badge where no accepted band exists.
+- Badges and sentences are computed in the browser from the same readings shown, so replay produces past-tense text for the selected moment and missing inputs simply drop their clause.
+
 ## 2026-11-15 — Self-hosted Node container is production
 
 Earth Field is its own repository (https://github.com/sardistic/earthfield) and production is https://earthfield.sardistic.com, a container built from `Dockerfile`. `server.mjs` adapts Node's HTTP server to the unchanged Worker module (`worker/main.js`), so the Worker code stays portable and the `dist/` Worker build remains available but is not what production runs. Under Node there is no `caches.default`; the existing optional-cache fallback and in-memory TTL cache apply. Still no database, credentials or scheduler; the container is stateless and read-only. Script tags carry `data-cfasync="false"` because the zone's script rewriting must not touch them.
