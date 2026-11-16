@@ -8,7 +8,7 @@ Node 20+; no dependencies. `npm run dev` serves http://localhost:4174. Run `npm 
 
 APIs: `/api/space`, `/api/local?lat=35.6127&lon=-77.3664`, `/api/cosmic?lat=35.6127&lon=-77.3664`. `/healthz` is application health, not provider health. Coordinates are bounded and external URLs are fixed in code.
 
-`/api/aurora?lat=&lon=` returns the NOAA OVATION aurora grid compacted to cells ≥ 4% plus the value nearest the point. The diorama's physics (ephemerides, GSM frame, Shue magnetopause, bow shock, Newell coupling, Kp oval, log distance scale) lives in `worker/model.js`; see `docs/agent/DECISIONS.md`.
+`/api/imagery` returns timestamped frame URLs for the live imagery gallery (GOES-19 SUVI and GeoColor, SDO HMI, SOHO LASCO, WSA–Enlil, OVATION maps, NASA EPIC); images load directly from those providers. `/api/aurora?lat=&lon=` returns the NOAA OVATION aurora grid compacted to cells ≥ 4% plus the value nearest the point. The diorama's physics (ephemerides, GSM frame, Shue magnetopause, bow shock, Newell coupling, Kp oval, log distance scale) lives in `worker/model.js`; see `docs/agent/DECISIONS.md`.
 
 `/api/history?period=day|week|month|year|decade` returns timestamped recorded series with their sampling interval and provider identity. Day uses five-minute/hourly data, week/month hourly where available, and year/decade daily averages. The diorama is an illustration with exaggerated scales; particle paths, field shape and auroral geometry are not reconstructed observations. Missing/stale values do not drive visual effects. Historical unavailable inputs remain blank. Period means use equal time bins, not a naive average across mixed daily/minute sampling.
 

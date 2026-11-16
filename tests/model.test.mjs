@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {sunEci,gsmFrame,shue,magnetopauseR,bowShockR,kpOval,coupling,logRadius,unlogRadius,moonEci,dynamicPressure,geoVec,fixedToGsm} from '../worker/model.js';
 import {compactOvation} from '../worker/aurora.js';
+import {frameTime,swpcFrames,epicFrames} from '../worker/imagery.js';
 import worker from '../worker/main.js';
 const deg=x=>x*180/Math.PI;
 
@@ -45,6 +46,18 @@ test('OVATION grid compacts, wraps 0–360 longitudes and finds the nearest cell
  const o=compactOvation(data,35.6127,-77.3664,5);
  assert.deepEqual(o.points,[-77,36,7,100,65,40]);assert.equal(o.here,7,'(36°, −77°) is nearer than (35°, −78°)');assert.equal(o.max,40);assert.equal(o.forecast,Date.parse('2026-11-16T03:52:00Z'));
  assert.throws(()=>compactOvation({},0,0));
+});
+
+test('imagery frame times parse every provider naming pattern; junk entries are dropped',()=>{
+ const u=s=>({url:s});
+ assert.equal(frameTime(u('/images/animations/suvi/primary/195/or_suvi-l2-ci195_g19_s20261116T025200Z_e20261116T025600Z_v1-0-2.png')),Date.parse('2026-11-16T02:52:00Z'));
+ assert.equal(frameTime(u('/images/animations/sdo-hmii/20261116_022238_512_HMII.jpg')),Date.parse('2026-11-16T02:22:38Z'));
+ assert.equal(frameTime(u('/images/animations/lasco-c3/20261116_0154_c3_512.jpg')),Date.parse('2026-11-16T01:54:00Z'));
+ assert.equal(frameTime(u('/images/animations/enlil/enlil_com2_58615_20261121T000000.jpg')),Date.parse('2026-11-21T00:00:00Z'));
+ assert.equal(frameTime({url:'/x/aurora_N_2026-11-16_0255.jpg',time_tag:'2026-11-16T02:55:00Z'}),Date.parse('2026-11-16T02:55:00Z'));
+ const f=swpcFrames([u('/a/20261116_0154_c3_512.jpg'),u('/a/20261116_0130_c3_512.jpg'),u('/a/notes.txt'),{},u('/a/20261116_0154_c3_512.jpg')]);
+ assert.deepEqual(f.map(p=>p[1]),['https://services.swpc.noaa.gov/a/20261116_0130_c3_512.jpg','https://services.swpc.noaa.gov/a/20261116_0154_c3_512.jpg']);
+ assert.deepEqual(epicFrames([{date:'2026-11-13 20:10:52',image:'epic_1b_20261113201540'},{date:'x',image:'y'},{date:'2026-11-13 20:10:52',image:'../evil'}]),[[Date.parse('2026-11-13T20:10:52Z'),'https://epic.gsfc.nasa.gov/archive/natural/2026/11/13/jpg/epic_1b_20261113201540.jpg']]);
 });
 
 test('aurora route validates coordinates',async()=>{assert.equal((await worker.fetch(new Request('https://example.com/api/aurora?lat=200'))).status,400);});

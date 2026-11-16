@@ -1,5 +1,14 @@
 # Earth Field decisions
 
+## 2026-11-16 — Live imagery gallery, loaded directly from providers
+
+"Watch it live" shows seven feeds in Sun-to-Earth order: GOES-19 SUVI 195/304 Å, SDO HMI continuum, SOHO LASCO C3/C2, WSA–Enlil (model), OVATION north/south maps (model), GOES-19 GeoColor full disk and NASA EPIC. Each card is labelled Observed or Model, with instrument, frame time and credit. All are public NOAA/NASA/ESA products used with credit.
+
+- `/api/imagery` returns only a manifest of timestamped frame URLs: SWPC `products/animations/*.json` (24 h of frames), the EPIC `api/natural` list and a HEAD for GOES Last-Modified, cached 4 min (EPIC 30 min). The browser loads images straight from the providers; the Toughbook does not proxy image bytes.
+- Frame time comes from SWPC `time_tag` or the file name; files that are not images and malformed EPIC IDs are rejected, so only provider-built URLs are emitted.
+- Live shows the latest frame (Enlil: the frame nearest now). In replay each card shows the newest frame at or before the cursor, within a per-feed tolerance (15 min to 3 h); otherwise it says there is no image for that moment. Updates are throttled to about one per 1.2 s, and each image swaps only after its preload completes.
+- Loops are on demand only and subsampled (SUVI frames are about 700 KB each, so 12 frames over 6 h).
+
 ## 2026-11-16 — Diorama driven by physical models
 
 The scene was hand-tuned decoration; it is now built from published models fed by the readings, in `worker/model.js` (pure functions, unit-tested, shipped to the browser via `toString()` like `history.js`).
