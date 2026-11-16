@@ -3,6 +3,8 @@ WORKDIR /app
 ENV NODE_ENV=production PORT=8080
 COPY package.json server.mjs ./
 COPY worker ./worker
+# Checkouts may be made under a restrictive umask; the files stay root-owned but must be readable by node.
+RUN chmod -R a+rX,go-w /app
 USER node
 EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
