@@ -6,6 +6,7 @@
     "build": "node scripts/build.mjs",
     "validate": "node scripts/validate-artifact.mjs",
     "test": "node --test tests/metrics.test.mjs tests/history.test.mjs",
-    "dev": "node scripts/dev.mjs"
+    "dev": "node scripts/dev.mjs",
+    "start": "node server.mjs"
   }
 }

@@ -1,0 +1,11 @@
+{
+  "name": "earthfield",
+  "handoff": "docs/agent/HANDOFF.md",
+  "decisions": "docs/agent/DECISIONS.md",
+  "worktree": ".agent/runtime/WORKTREE.md",
+  "enforce_handoff": true,
+  "status": {
+    "component": "earthfield",
+    "environment": "production"
+  }
+}

@@ -1,5 +1,9 @@
 # Earth Field decisions
 
+## 2026-11-15 — Self-hosted Node container is production
+
+Earth Field is its own repository (https://github.com/sardistic/earthfield) and production is https://earthfield.sardistic.com, a container built from `Dockerfile`. `server.mjs` adapts Node's HTTP server to the unchanged Worker module (`worker/main.js`), so the Worker code stays portable and the `dist/` Worker build remains available but is not what production runs. Under Node there is no `caches.default`; the existing optional-cache fallback and in-memory TTL cache apply. Still no database, credentials or scheduler; the container is stateless and read-only. Script tags carry `data-cfasync="false"` because the zone's script rewriting must not touch them.
+
 ## 2026-11-14 — Scientific metrics with explicit geographic and historical scope
 
 Standalone dependency-free Cloudflare Worker Site, defaulting to Greenville, North Carolina (35.6127, -77.3664). Official feeds are fetched server-side and cached by source cadence. Failures are isolated and observation timestamps govern freshness. No combined radiation dose or safety score is synthesized.
