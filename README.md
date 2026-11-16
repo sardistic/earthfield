@@ -8,6 +8,8 @@ Node 20+; no dependencies. `npm run dev` serves http://localhost:4174. Run `npm 
 
 APIs: `/api/space`, `/api/local?lat=35.6127&lon=-77.3664`, `/api/cosmic?lat=35.6127&lon=-77.3664`. `/healthz` is application health, not provider health. Coordinates are bounded and external URLs are fixed in code.
 
+`/api/aurora?lat=&lon=` returns the NOAA OVATION aurora grid compacted to cells ≥ 4% plus the value nearest the point. The diorama's physics (ephemerides, GSM frame, Shue magnetopause, bow shock, Newell coupling, Kp oval, log distance scale) lives in `worker/model.js`; see `docs/agent/DECISIONS.md`.
+
 `/api/history?period=day|week|month|year|decade` returns timestamped recorded series with their sampling interval and provider identity. Day uses five-minute/hourly data, week/month hourly where available, and year/decade daily averages. The diorama is an illustration with exaggerated scales; particle paths, field shape and auroral geometry are not reconstructed observations. Missing/stale values do not drive visual effects. Historical unavailable inputs remain blank. Period means use equal time bins, not a naive average across mixed daily/minute sampling.
 
 Page refresh is every two minutes while visible. Server caches reflect source cadence. A source failure cannot masquerade as a fresh zero. If a browser retains its previous reading after failure, the row is marked failed and excluded from fresh coverage. Averages/ranges use actual available history in the selected 24-hour, seven-day or 30-day window. Trend definitions and coverage are explicit; no interpolated history is invented.

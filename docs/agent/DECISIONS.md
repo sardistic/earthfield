@@ -1,5 +1,16 @@
 # Earth Field decisions
 
+## 2026-11-16 — Diorama driven by physical models
+
+The scene was hand-tuned decoration; it is now built from published models fed by the readings, in `worker/model.js` (pure functions, unit-tested, shipped to the browser via `toString()` like `history.js`).
+
+- Geometry is real for the moment shown: low-precision solar and lunar ephemerides, GMST Earth rotation, and the IGRF-14 (2025) geomagnetic north pole at 80.85° N, 72.68° W define the GSM frame. Continents, the day/night terminator, the observer and GOES-19 (75.2° W, geostationary) sit where they are. Scene axes: x = −X_GSM (Sun left), y = Z_GSM, z = Y_GSM (dusk, toward the viewer).
+- Magnetopause: Shue et al. (1998) from live dynamic pressure and Bz. Without wind data it falls back to 2 nPa and Bz 0 and says so. Bow shock: a conic with its nose at 1.3 × the standoff (typical high-Mach ratio, e = 0.9).
+- Field lines: dipole L-shells, compressed on the dayside to fit inside the magnetopause, stretched tailward at night, and omitted where they would cross the dayside boundary. Open polar-cap lines increase with southward Bz. The observer's own L-shell is drawn.
+- Energy input: the Newell et al. (2007) coupling function, relative. Clock angle is approximated from Bz/Bt because By is not ingested.
+- Aurora: live mode uses NOAA OVATION (new `/api/aurora`, compacted to cells ≥ 4%, 5-minute upstream cache) with brightness proportional to the model value. Replay has no OVATION history and uses a Kp oval (equatorward edge 66.5° − 2.04 Kp magnetic latitude at midnight). The panel names the source in use.
+- One logarithmic radial scale (1 + 0.7 ln r Rᴇ) for every distance, with 10 and 100 Rᴇ rings drawn. Particle streams and field-line paths remain illustrative; the Sun is drawn at the frame edge because it lies beyond the scale.
+
 ## 2026-11-15 — Plain-language interpretation layer
 
 The page leads with a live sentence ("Space weather is quiet.") and a summary generated from the readings, followed by the 18 readings grouped in the order the Sun's influence travels: Sun, solar wind, magnetosphere, local sky, cosmic rays. Interpretation stays per-measurement; there is still no combined score.
