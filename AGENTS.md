@@ -31,6 +31,7 @@ No database, credentials or scheduler. All data comes from public provider feeds
 | Lint | None configured |
 | Build | `npm run build` |
 | Validate artifact | `npm run validate` |
+| Icons / share image | Edit files in `assets/`, then `node scripts/embed-assets.mjs` to regenerate `worker/assets.js` (served at `/favicon.svg`, `/favicon.ico`, `/apple-touch-icon.png`, `/icon-192.png`, `/icon-512.png`, `/og.jpg`) |
 | Run (production) | `npm start` (`server.mjs`, `PORT` default 8080) or the `Dockerfile` |
 | Deploy | On the production host: pull this repository, then `docker compose up -d --build` in the service directory (see the control-plane runbook) |
 

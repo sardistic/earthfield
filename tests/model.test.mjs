@@ -60,4 +60,9 @@ test('imagery frame times parse every provider naming pattern; junk entries are 
  assert.deepEqual(epicFrames([{date:'2026-11-13 20:10:52',image:'epic_1b_20261113201540'},{date:'x',image:'y'},{date:'2026-11-13 20:10:52',image:'../evil'}]),[[Date.parse('2026-11-13T20:10:52Z'),'https://epic.gsfc.nasa.gov/archive/natural/2026/11/13/jpg/epic_1b_20261113201540.jpg']]);
 });
 
+test('icons, share image and manifest are served with the right types',async()=>{
+ for(const[p,type]of[['/favicon.svg','image/svg+xml'],['/favicon.ico','image/png'],['/apple-touch-icon.png','image/png'],['/og.jpg','image/jpeg'],['/site.webmanifest','application/manifest+json']]){const r=await worker.fetch(new Request('https://example.com'+p));assert.equal(r.status,200,p);assert.equal(r.headers.get('content-type'),type,p);assert.ok((await r.arrayBuffer()).byteLength>200,p);}
+ const png=new Uint8Array(await (await worker.fetch(new Request('https://example.com/apple-touch-icon.png'))).arrayBuffer());assert.deepEqual([...png.slice(0,4)],[0x89,0x50,0x4e,0x47],'PNG signature survives the base64 round trip');
+});
+
 test('aurora route validates coordinates',async()=>{assert.equal((await worker.fetch(new Request('https://example.com/api/aurora?lat=200'))).status,400);});
