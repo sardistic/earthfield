@@ -10,7 +10,7 @@ It is a standalone project. It began inside the `lights` repository under `sites
 
 Dependency-free Cloudflare-Worker-style Site, Node 20+.
 
-- `worker/main.js` — entrypoint and routing (`/`, `/app.js`, `/api/space`, `/api/local`, `/api/cosmic`, `/api/history`, `/healthz`).
+- `worker/main.js` — entrypoint and routing (`/`, `/app.js`, `/api/space`, `/api/local`, `/api/cosmic`, `/api/history`, `/api/glance`, `/healthz`).
 - `worker/data.js` — live provider fetches, parsing, caching by source cadence.
 - `worker/history.js` — on-demand archived series and time-bin statistics.
 - `worker/view.js` — page markup and styles.

@@ -6,7 +6,7 @@ Live space weather dashboard centered on Greenville, North Carolina. An interact
 
 Node 20+; no dependencies. `npm run dev` serves http://localhost:4174. Run `npm test`, `npm run build`, and `npm run validate`. Source entrypoint: `worker/main.js`. The deterministic build concatenates the known local modules into a standalone Worker at `dist/server/index.js`; it removes only their top-level module declarations. Browser canvas/application code is served at `/app.js`.
 
-APIs: `/api/space`, `/api/local?lat=35.6127&lon=-77.3664`, `/api/cosmic?lat=35.6127&lon=-77.3664`. `/healthz` is application health, not provider health. Coordinates are bounded and external URLs are fixed in code.
+APIs: `/api/space`, `/api/local?lat=35.6127&lon=-77.3664`, `/api/cosmic?lat=35.6127&lon=-77.3664`. `/api/glance` is a compact cross-origin summary of right now (used by sardistic.com's room). `/healthz` is application health, not provider health. Coordinates are bounded and external URLs are fixed in code.
 
 `/api/imagery` returns timestamped frame URLs for the live imagery gallery (GOES-19 SUVI and GeoColor, SDO HMI, SOHO LASCO, WSA–Enlil, OVATION maps, NASA EPIC); images load directly from those providers. `/api/aurora?lat=&lon=` returns the NOAA OVATION aurora grid compacted to cells ≥ 4% plus the value nearest the point. The diorama's physics (ephemerides, GSM frame, Shue magnetopause, bow shock, Newell coupling, Kp oval, log distance scale) lives in `worker/model.js`; see `docs/agent/DECISIONS.md`.
 
